@@ -3,7 +3,7 @@ from math import sin, cos, sqrt, atan2, radians
 
 SAMPLE = 'Vorlage in WGS84.csv'
 INTERIM_RESULT_FILENAME = 'Zwischenergebnisse.csv'
-RESULT_FILENAME = 'Ergebnisse für test.csv'
+RESULT_FILENAME = 'Ergebnisse für Google.csv'
 
 API_KEYS = json.load(open("config.json"))
 
@@ -22,9 +22,9 @@ def geocoding():
             rows.append(new_row)
         start = time.time()
         for row in rows:
-            # g = geocoder.google(row, key=API_KEYS['apis'][0]['googleapi'])
+            g = geocoder.google(row, key=API_KEYS['apis'][0]['googleapi_diego'])
             # g = geocoder.opencage(row, key=API_KEYS['apis'][0]['opencage'])
-            g = geocoder.bing(row, key=API_KEYS['apis'][0]['bing'])
+            # g = geocoder.bing(row, key=API_KEYS['apis'][0]['bing'])
             # g = geocoder.osm(row)
 
             if g.latlng is not None:
