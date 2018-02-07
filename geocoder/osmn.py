@@ -8,14 +8,14 @@ import json
 from geocoder.base import OneResult, MultipleResultsQuery
 
 
-class OsmResult(OneResult):
+class OsmnResult(OneResult):
 
     def __init__(self, json_content):
         # create safe shortcuts
         self._address = json_content.get('address', {})
 
         # proceed with super.__init__
-        super(OsmResult, self).__init__(json_content)
+        super(OsmnResult, self).__init__(json_content)
 
     # ============================ #
     # Geometry - Points & Polygons #
@@ -37,10 +37,10 @@ class OsmResult(OneResult):
     def bbox(self):
         _boundingbox = self.raw.get('boundingbox')
         if _boundingbox:
-            south = float(_boundingbox[0])
-            west = float(_boundingbox[2])
-            north = float(_boundingbox[1])
-            east = float(_boundingbox[3])
+            south = float(_boundingbox[1])
+            west = float(_boundingbox[0])
+            north = float(_boundingbox[3])
+            east = float(_boundingbox[2])
             return self._get_bbox(south, west, north, east)
 
     # ========================== #
@@ -303,23 +303,27 @@ class OsmResult(OneResult):
         return self.raw.get('place_rank')
 
 
-class OsmQuery(MultipleResultsQuery):
+class OsmnQuery(MultipleResultsQuery):
     """
-    Nominatim
+   OSMNames
     =========
-    Nominatim (from the Latin, 'by name') is a tool to search OSM data by name
+    OSMNames is a tool to search OSM data by name
     and address and to generate synthetic addresses of OSM points (reverse geocoding).
 
     API Reference
     -------------
-    http://wiki.openstreetmap.org/wiki/Nominatim
+    http://osmnames.org/api/
     """
     provider = 'osm'
     method = 'geocode'
 
-    _URL = 'https://nominatim.openstreetmap.org/search'
-    _RESULT_CLASS = OsmResult
+    _URL = 'https://search.osmnames.org/q/'
+    _RESULT_CLASS = OsmnResult
     _KEY_MANDATORY = False
+
+    def _connect(self):
+        self.url += self.location + '.js?key=Bgin5zODKgyfIGKpV9rb'
+        return super()._connect()
 
     def _build_params(self, location, provider_key, **kwargs):
         # backward compatitibility for 'limit' (now maxRows)
@@ -329,38 +333,41 @@ class OsmQuery(MultipleResultsQuery):
             kwargs['maxRows'] = kwargs['limit']
         # build params
         return {
-            'q': location,
             'format': 'jsonv2',
             'addressdetails': 1,
             'limit': kwargs.get('maxRows', 1),
         }
 
+    def _adapt_results(self, json_response):
+        return json_response['results']
+        #return []
+
     def _before_initialize(self, location, **kwargs):
         """ Check if specific URL has not been provided, otherwise, use cls._URL"""
         url = kwargs.get('url', '')
         if url.lower() == 'localhost':
-            self.url = 'http://localhost/nominatim/search'
+            self.url = 'http://localhost/osmnames'
         elif url:
             self.url = url
         # else:  do not change self.url, which is cls._URL
 
 
-class OsmQueryDetail(MultipleResultsQuery):
+class OsmnQueryDetail(MultipleResultsQuery):
     """
-    Nominatim
+    OSMNames
     =========
-    Nominatim (from the Latin, 'by name') is a tool to search OSM data by name
+    OSMNames is a tool to search OSM data by name
     and address and to generate synthetic addresses of OSM points (reverse geocoding).
 
     API Reference
     -------------
-    http://wiki.openstreetmap.org/wiki/Nominatim
+    http://osmnames.org/api/
     """
     provider = 'osm'
     method = 'details'
 
-    _URL = 'https://nominatim.openstreetmap.org/search'
-    _RESULT_CLASS = OsmResult
+    _URL = 'https://search.osmnames.org/q/'
+    _RESULT_CLASS = OsmnResult
     _KEY_MANDATORY = False
 
     def _build_params(self, location, provider_key, **kwargs):
@@ -373,6 +380,7 @@ class OsmQueryDetail(MultipleResultsQuery):
         query = {
             'format': 'jsonv2',
             'addressdetails': 1,
+            'key': provider_key,
             'limit': kwargs.get('maxRows', 1),
         }
         query.update(kwargs)
@@ -382,15 +390,16 @@ class OsmQueryDetail(MultipleResultsQuery):
         """ Check if specific URL has not been provided, otherwise, use cls._URL"""
         url = kwargs.get('url', '')
         if url.lower() == 'localhost':
-            self.url = 'http://localhost/nominatim/search'
+            self.url = 'http://localhost/osmnames'
         elif url:
             self.url = url
         # else:  do not change self.url, which is cls._URL
 
 
 if __name__ == '__main__':
+    print("Wiip")
     logging.basicConfig(level=logging.INFO)
-    g = OsmQuery('Ottawa, Ontario')
+    g = OsmnQuery('Ottawa, Ontario')
     g.debug()
-    g = OsmQuery('Ottawa, Ontario', maxRows=5)
+    g = OsmnQuery('Ottawa, Ontario', maxRows=5)
     print(json.dumps(g.geojson, indent=4))
