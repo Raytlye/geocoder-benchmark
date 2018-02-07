@@ -25,6 +25,7 @@ from geocoder.mapzen import MapzenQuery
 from geocoder.maxmind import MaxmindQuery
 from geocoder.opencage import OpenCageQuery
 from geocoder.osm import OsmQuery, OsmQueryDetail
+from geocoder.osmn import OsmnQuery
 from geocoder.ottawa import OttawaQuery
 from geocoder.tamu import TamuQuery
 from geocoder.tomtom import TomtomQuery
@@ -71,6 +72,7 @@ options = {
         'details': OsmQueryDetail,
         'reverse': OsmReverse,
     },
+    'osmn': {'geocode': OsmnQuery},
     'tgos': {
         'geocode': TgosQuery
     },
@@ -446,6 +448,11 @@ def osm(location, **kwargs):
                (ex: http://nominatim.openstreetmap.org/search)
     """
     return get(location, provider='osm', **kwargs)
+
+
+def osmn(location, **kwargs):
+
+    return get(location, provider='osmn', **kwargs)
 
 
 def maxmind(location='me', **kwargs):

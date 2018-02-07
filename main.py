@@ -3,7 +3,7 @@ from math import sin, cos, sqrt, atan2, radians
 
 SAMPLE = 'Vorlage in WGS84.csv'
 INTERIM_RESULT_FILENAME = 'Zwischenergebnisse.csv'
-RESULT_FILENAME = 'Ergebnisse für Google.csv'
+RESULT_FILENAME = 'Ergebnisse für Nominatim.csv'
 
 API_KEYS = json.load(open("config.json"))
 
@@ -18,14 +18,15 @@ def geocoding():
         error_counter = 0
         counter = 0
         for row in reader:
-            new_row = row[2] + ' ' + row[3] + ', Zurich Switzerland'
+            new_row = row[2] + ' ' + row[3] + ', ' + row[0] + ' Zürich Switzerland'
             rows.append(new_row)
         start = time.time()
         for row in rows:
-            g = geocoder.google(row, key=API_KEYS['apis'][0]['googleapi_diego'])
+            # g = geocoder.google(row, key=API_KEYS['apis'][0]['googleapi_diego'])
             # g = geocoder.opencage(row, key=API_KEYS['apis'][0]['opencage'])
-            # g = geocoder.bing(row, key=API_KEYS['apis'][0]['bing'])
-            # g = geocoder.osm(row)
+            # g = geocoder.bing(row, key=API_KEYS['apis'][0]['bing_diego'])
+            g = geocoder.osm(row)
+            # g = geocoder.osmn(row)
 
             if g.latlng is not None:
                 counter += 1
