@@ -355,7 +355,6 @@ class MultipleResultsQuery(MutableSequence):
         # raise exception if not valid key found
         if not key and cls._KEY_MANDATORY:
             raise ValueError('Provide API Key')
-            #key = 'Bgin5zODKgyfIGKpV9rb'
 
         return key
 
@@ -465,8 +464,6 @@ class MultipleResultsQuery(MutableSequence):
         # creates instances for results
         if not has_error:
             self._parse_results(json_response)
-        else:
-            print('Whoopsie! There was an error.')
 
     def _connect(self):
         """ - Query self.url (validated cls._URL)

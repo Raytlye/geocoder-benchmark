@@ -20,6 +20,7 @@ from geocoder.ipinfo import IpinfoQuery
 from geocoder.komoot import KomootQuery
 from geocoder.locationiq import LocationIQQuery
 from geocoder.mapbox import MapboxQuery
+from geocoder.mapcat import MapcatQuery
 from geocoder.mapquest import MapquestQuery
 from geocoder.mapzen import MapzenQuery
 from geocoder.maxmind import MaxmindQuery
@@ -99,6 +100,7 @@ options = {
         'geocode': MapboxQuery,
         'reverse': MapboxReverse,
     },
+    'mapcat': {'geocode': MapcatQuery},
     'maxmind': {'geocode': MaxmindQuery},
     'ipinfo': {'geocode': IpinfoQuery},
     'geonames': {
@@ -235,6 +237,11 @@ def mapbox(location, **kwargs):
         > batch
     """
     return get(location, provider='mapbox', **kwargs)
+
+
+def mapcat(location, **kwargs):
+
+    return get(location, provider='mapcat', **kwargs)
 
 
 def yandex(location, **kwargs):
